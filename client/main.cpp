@@ -1,12 +1,14 @@
-#include "TcpServer.h"
+#include "TcpConnector.h"
 
 #include <iostream>
 #include <string>
 
 
 int main(int argc, char* argv[]) {
-    std::string _ip = "0.0.0.0";
+    std::string _ip = "192.168.1.5";
     int _port = 80;
+    TcpConnector test(_ip.c_str(), _port);
+    test.InitSend("test");
 
     if (argc < 2) {
         //file error

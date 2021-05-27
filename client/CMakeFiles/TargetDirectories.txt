@@ -1,0 +1,3 @@
+/home/sense_net/REPO/sobes/imaqliq.ru/client/CMakeFiles/rebuild_cache.dir
+/home/sense_net/REPO/sobes/imaqliq.ru/client/CMakeFiles/edit_cache.dir
+/home/sense_net/REPO/sobes/imaqliq.ru/client/CMakeFiles/ima_cli.dir
