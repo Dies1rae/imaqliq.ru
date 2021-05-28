@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/ima_cli.dir/main.cpp.o CMakeFiles/ima_cli.dir/TcpConnector.cpp.o  -o ima_cli 

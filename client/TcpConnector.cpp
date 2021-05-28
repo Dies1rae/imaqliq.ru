@@ -41,9 +41,10 @@ int TcpConnector::InitSend (const std::string& file) {
 
     if(connect(svr_socket, (sockaddr*) &hint, sizeof(hint)) == -1) {
         std::cerr << "connected error" << std::endl;
-        exit(1);
+        return -1;
     } else {
         std::cerr << "connected ok" << std::endl;
+        send(svr_socket, file.c_str(), file.size(), 0);
         exit(1);
     }
     close(svr_socket);

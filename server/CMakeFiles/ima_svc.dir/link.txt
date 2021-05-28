@@ -1,1 +1,0 @@
-/usr/bin/c++     CMakeFiles/ima_svc.dir/main.cpp.o CMakeFiles/ima_svc.dir/TcpServer.cpp.o  -o ima_svc 
