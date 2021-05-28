@@ -14,7 +14,7 @@ Show result of operation.
 
 ima_svc [OPTION]
 DESCRIPTION: Start a child proccess and exit prom parrent(kill zombies) and listen client connection with signature like %COMMAND% %FILENAME% %FILE% - so can be tested
-from trelnet or whatever... Work with basic errors like creating socket or bad port number. From start show status and PID of proc.
+from trelnet or whatever... Work with basic errors like creating socket or bad port number. From start show status and PID of proc. To propertly start svc root needed.
 
 ima_svc - starts by default 0.0.0.0 80
 
