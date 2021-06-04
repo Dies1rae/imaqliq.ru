@@ -14,7 +14,6 @@
 #include <stdlib.h>
 #include <string>
 #include <cstring>
-#include <iostream>
 #include <istream>
 #include <sstream>
 #include <fstream>
@@ -24,7 +23,6 @@
 #include <vector>
 #include <algorithm> 
 
-void logfile(char*);
 
 int TcpServer::init() {
     svr_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -61,9 +59,6 @@ int TcpServer::run() {
                 sockaddr_in client_addr;
                 int addrlen = sizeof(client_addr);
                 cl_so_main.push_back(accept(svr_socket, (struct sockaddr*)&client_addr, (socklen_t*)&addrlen));
-                inet_ntop(AF_INET, &(client_addr.sin_addr), cl_ip_addr, 16);
-                logfile(cl_ip_addr);
-                onClientConnected(cl_so_main[cl_so_main.size()]);
             }
             for (int i=0;i<cl_so_main.size();i++) {
                 if (FD_ISSET(cl_so_main[i], fd_in)) {
@@ -71,7 +66,6 @@ int TcpServer::run() {
                     memset(buf,0, MAX_BUFFER_SIZE);
                     int bytesIn = recv(cl_so_main[i], buf, MAX_BUFFER_SIZE, 0);
                     if (bytesIn <= 0) {
-                        onClientDisconnected(cl_so_main[i]);
                         close(cl_so_main[i]); 
                         FD_CLR(cl_so_main[i], fd_in);
                         FD_CLR(cl_so_main[i],fd_out);
@@ -87,83 +81,31 @@ int TcpServer::run() {
     return 0;
 }
 
-void TcpServer::sendToClient(int clientSocket, const char* msg, int length) {
-	send(clientSocket, msg, length, 0);
-}
-
-void TcpServer::broadcastToClients(int sendingClient, const char* msg, int length) {
-	for (int i = 0; i < cl_so_main.size(); i++) {
-            sendToClient(cl_so_main[i], msg, length);	
-	}
-}
-
-void TcpServer::onClientConnected(int clientSocket) {
-
-}
-
-void TcpServer::onClientDisconnected(int clientSocket) {
-
-}
 void TcpServer::onMessageReceived(int clientSocket, const char* msg, int length) {
 	std::istringstream iss(msg);
-	std::vector<std::string> parsed((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
-    bool file_save_status = false;
-    
-	std::string content;
+	std::vector<std::string> parsed;
 	std::string file_name;
+
+    while(!iss.eof()) {
+        std::string tmp;
+        std::getline(iss, tmp); 
+        parsed.push_back(tmp);
+    }
 
     if(!parsed.empty()) {
         if (parsed[0] == "SAVE" && parsed.size() >= 2) {
             file_name = parsed[1];
+            std::ofstream dst_("./" + file_name, std::ios::binary);
 
-            for(const auto& ch : this->cl_ip_addr){
-                content += ch;
-            }
-            content += '\n';
-            for(size_t ptr = 2; ptr < parsed.size(); ptr ++){
-                if (ptr < parsed.size() - 1){
-                    content += parsed[ptr] + ' ';
+            for(size_t ptr = 2; ptr < parsed.size(); ptr ++) {
+                if(ptr < parsed.size() - 1){
+                    dst_ << parsed[ptr] + '\n';
                 } else {
-                    content += parsed[ptr] + '\n';
+                    dst_ << parsed[ptr];
                 }
             }
-            
-            std::string filepath = "./" + file_name;
-            std::ofstream dst_(filepath, std::ios::binary);
-            dst_ << content;
-            file_save_status = true;
             dst_.close();
         }
-    }  else {
-        file_save_status = false;
     }
-
-    std::ostringstream oss;
-    if(file_save_status) {
-        oss << "OK";
-    } else {
-        oss << "NOtOK";
-    }
-    std::string output = oss.str();
-    int size = output.size() + 2;
-    sendToClient(clientSocket, output.c_str(), size);
 }
 
-char * TcpServer::get_cl_ip_addrs(){
-    return this->cl_ip_addr;
-}
-
-void logfile(char * ip) {
-	std::string filepath = "./ipaddr.txt";
-	std::ifstream check_file(filepath, std::ios::binary | std::ios::ate);
-	if (check_file.tellg() >= 3000 ) {
-		std::ofstream ip_file;
-		ip_file.open(filepath, std::ofstream::out | std::ofstream::trunc);
-                ip_file << "begin" << '\n';
-		ip_file.close();
-	}
-	std::ofstream ip_file;
-	ip_file.open(filepath, std::ios::app);
-	ip_file << ip << '\n';
-	ip_file.close();
-}

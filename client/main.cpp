@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
     std::string _ip = "192.168.1.5";
     int _port = 80;
     std::string file_path;
-    std::ostringstream buff;
+    std::string buff;
 
     if (argc < 3) {
         std::cerr << "Error need more arguments: " << std::endl;
@@ -35,13 +35,19 @@ int main(int argc, char* argv[]) {
             return -1;
     }
 
-    buff << "SAVE\n";
-    buff << file_path.substr(file_path.find_last_of('/') + 1) + '\n';
-    buff << src.rdbuf();
+    buff += "SAVE\n";
+    buff += file_path.substr(file_path.find_last_of('/') + 1) + '\n';
+    while (!src.eof()) {
+        std::string tmp_line;
+        getline(src, tmp_line);
+        buff += tmp_line + '\n';
+    }
+    buff = buff.substr(0, buff.size() - 1);
+    //buff << src.rdbuf();
     src.close();
 
     TcpConnector test(_ip.c_str(), _port);
-    test.InitSend(buff.str());    
+    test.InitSend(buff);    
     std::cerr << "Copied one file: " << file_path << "| to " << _ip << ":" << _port << std::endl;
 
     return 0;

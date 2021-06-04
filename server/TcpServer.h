@@ -18,6 +18,7 @@
 #include <limits.h>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 #pragma comment (lib, "ws2_32.lib")
 
@@ -32,26 +33,18 @@ public:
         svr_port = port;
         svr_socket;
         cl_so_main;
-        cl_ip_addr[16] = '\0';
         fd_in = new fd_set;
         fd_out = new fd_set;
         fd_ex = new fd_set;
     }
     int init();
     int run();
-    char * get_cl_ip_addrs();
-protected:
-    virtual void onClientConnected(int clientSocket);
-    virtual void onClientDisconnected(int clientSocket);
-    virtual void onMessageReceived(int clientSocket, const char* msg, int length);
-    void sendToClient(int clientSocket, const char* msg, int length);
-    void broadcastToClients(int sendingClient, const char* msg, int length);
+    void onMessageReceived(int clientSocket, const char* msg, int length);
 private:
     const char                * svr_addr;
     int                         svr_port;
     int                         svr_socket;
     std::vector<int>            cl_so_main;
-    char                        cl_ip_addr[16];
     fd_set                      * fd_in;
     fd_set                      * fd_out;
     fd_set                      * fd_ex;
