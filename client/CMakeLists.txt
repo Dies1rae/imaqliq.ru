@@ -8,7 +8,7 @@ if (CMAKE_SYSTEM_NAME MATCHES "^MINGW")
 else()
     set(SYSTEM_LIBS)
 endif()
-
+#some commit_
 add_executable(ima_cli main.cpp TcpConnector.h TcpConnector.cpp)
 target_include_directories(ima_cli PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(ima_cli ${SYSTEM_LIBS})
